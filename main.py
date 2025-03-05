@@ -10,34 +10,33 @@ import asyncio
 # Load environment variables from .env file
 load_dotenv()
 
-# Configure Gemini API
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 genai.configure(api_key=GEMINI_API_KEY)
 
-# Use the latest Gemini model
+
 model = genai.GenerativeModel('gemini-1.5-flash')
 
-# Global variable for number of entries
-num_entries = 1  # Default number of entries to generate
 
-# Global variables for features
+num_entries = 1  
+
+
 saved_favorites = []
 generation_history = []
-export_format = 'json'  # Default export format
-max_history_entries = 50  # Default max history entries
+export_format = 'json'  
+max_history_entries = 50  
 
-# Add these global variables at the top with other globals
+
 favorites_container = ui.column().classes('w-full')
 history_container = ui.column().classes('w-full')
 
-# Add these global variables at the top with other globals
+
 mode = None
 fantasy_type_select = None
 era = None
 universe_type = None
 reality_type = None
 
-# Add this at the top of the file with other imports and globals
+
 paper_style = '''
 <style>
 body { 
@@ -284,10 +283,10 @@ body.q-dialog--modal {
 </style>
 '''
 
-# Add this function definition before main_page
+
 def show_data_dialog(data, mode='Regular'):
     with ui.dialog() as dialog, ui.card().classes('w-96 dialog-content'):
-        # Add header with title and favorite button
+        
         with ui.row().classes('w-full justify-between items-center mb-4'):
             title = '🎲 Generated Data' if mode == 'Regular' else '✨ Fantasy Data' if mode == 'Fantasy Mode' else '📖 Story Mode'
             ui.label(title).classes('text-h6')
@@ -349,7 +348,7 @@ def show_data_dialog(data, mode='Regular'):
                         ui.label('Epilogue').classes('text-h6 mt-4')
                         ui.label(story['epilogue']).classes('mt-2')
 
-        # Footer with close button
+       
         with ui.row().classes('w-full justify-between mt-4'):
             ui.button('Close', on_click=dialog.close)
             ui.button(
@@ -358,7 +357,7 @@ def show_data_dialog(data, mode='Regular'):
             ).classes('bg-red-600')
         dialog.open()
 
-# Update the main_page function
+
 def main_page():
     global mode, fantasy_type_select, era, universe_type, reality_type
     ui.html(paper_style)
@@ -367,7 +366,7 @@ def main_page():
         ui.label('Fake Frenzy').classes('text-h3 text-center font-bold')
         ui.label('Generate Fun & Creative Fake Data').classes('text-subtitle1 text-center mb-4 opacity-75')
     
-    # Add tabs
+    
     with ui.tabs().classes('w-full justify-center') as tabs:
         ui.tab('Generate', icon='add')
         ui.tab('Favorites', icon='star')
@@ -472,8 +471,8 @@ def main_page():
                     'Number of Entries',
                     value=1,
                     min=1,
-                    max=10,  # Add a reasonable maximum
-                    format='%d',  # Force integer format
+                    max=10,  
+                    format='%d',  
                     on_change=update_num_entries
                 ).classes('w-40')
 
@@ -519,10 +518,10 @@ def main_page():
                     on_change=update_max_history
                 ).classes('w-48')
 
-# Move generate_fantasy_data and generate_character_story functions before main_page
+
 def generate_fantasy_data(count=1, fantasy_type='Time Travel', subtype='Medieval', include_story=False):
     try:
-        # Build the prompt based on fantasy type
+       
         base_prompt = f"""Generate {count} {'interconnected' if fantasy_type == 'Character Universe' else ''} fantasy characters with rich details.
         
         Fantasy Type: {fantasy_type}
@@ -568,7 +567,7 @@ def generate_fantasy_data(count=1, fantasy_type='Time Travel', subtype='Medieval
 
 def generate_character_story(character_data):
     try:
-        # Build character info from available data
+        
         story_prompt = f"""Create an engaging short story about this character:
         Name: {character_data.get('full_name', 'Unknown')}
         Occupation: {character_data.get('occupation', 'Unknown')}
@@ -597,7 +596,7 @@ def generate_character_story(character_data):
 
         response = model.generate_content(story_prompt)
         
-        # Process the response
+        
         response_text = response.text.strip()
         if '```' in response_text:
             response_text = response_text.split('```')[1].strip()
@@ -607,7 +606,7 @@ def generate_character_story(character_data):
         
         story_data = json.loads(response_text)
         
-        # Validate story structure
+        
         if not all(key in story_data for key in ['title', 'chapters', 'epilogue']):
             raise ValueError("Invalid story format")
             
@@ -625,10 +624,10 @@ def generate_character_story(character_data):
             "epilogue": "To be continued..."
         }
 
-# Function to generate fake data using Gemini API
+
 def generate_fake_data(count=1):
     try:
-        # More specific prompt to ensure consistent JSON format
+        
         prompt = f"""Generate exactly {count} different fake persons. Each person must have completely different details.
         Return a JSON object with an array of {count} people.
         
@@ -659,7 +658,7 @@ def generate_fake_data(count=1):
         try:
             response_text = response.text.strip()
             
-            # Remove any markdown formatting if present
+           
             if '```' in response_text:
                 response_text = response_text.split('```')[1]
                 if '\n' in response_text:
@@ -668,7 +667,7 @@ def generate_fake_data(count=1):
             response_text = response_text.replace('```', '').strip()
             data = json.loads(response_text)
             
-            # Verify we got the requested number of entries
+            
             if isinstance(data, dict) and 'people' in data:
                 if len(data['people']) != count:
                     print(f"Warning: Received {len(data['people'])} entries instead of {count}")
@@ -690,11 +689,11 @@ def generate_fake_data(count=1):
         ui.notify(f'Error generating data: {str(e)}', type='error')
         return None
 
-# Function to generate data and display it
+
 async def generate_data():
     ui.notify('Generating data...', type='info')
     try:
-        # Get current mode and options
+        
         current_mode = mode.value if mode else 'Regular'
         data = None
         
@@ -726,7 +725,7 @@ async def generate_data():
         print(f"Error: {str(e)}")
         ui.notify(f'Error: {str(e)}', type='error')
 
-# Function to export data to JSON file
+
 async def export_to_json():
     data = generate_fake_data(count=num_entries)
     if data:
@@ -739,10 +738,10 @@ async def export_to_json():
     else:
         ui.notify('No data to export')
 
-# Add this new function for surprise data generation
+
 def generate_surprise_data(count=1):
     try:
-        # More creative prompt for surprising results
+        
         prompt = f"""Generate {count} CREATIVE and UNUSUAL (but realistic) fake person(s).
         Return ONLY a valid JSON object with no additional text or formatting.
         Make the data interesting and unique, including:
@@ -772,30 +771,30 @@ def generate_surprise_data(count=1):
         
         print("Generating surprise data...")
         response = model.generate_content(prompt)
-        print(f"Raw response: {response.text}")  # Debug log
+        print(f"Raw response: {response.text}")  
         
-        # Process the response
+       
         response_text = response.text.strip()
         
-        # Remove any markdown formatting
+        
         if '```' in response_text:
             parts = response_text.split('```')
             for part in parts:
                 if '{' in part and '}' in part:
                     response_text = part.strip()
                     break
-            # Remove any language identifier
+           
             if response_text.startswith('json'):
                 response_text = response_text[4:].strip()
         
-        # Clean up the JSON string
+       
         response_text = response_text.strip('`').strip()
-        print(f"Cleaned JSON string: {response_text}")  # Debug log
+        print(f"Cleaned JSON string: {response_text}")  
         
-        # Parse JSON
+        
         data = json.loads(response_text)
         
-        # Validate structure
+        
         if not isinstance(data, dict) or 'people' not in data or not isinstance(data['people'], list):
             raise ValueError("Invalid response format")
         
@@ -811,12 +810,12 @@ def generate_surprise_data(count=1):
         ui.notify(f'Error generating surprise data: {str(e)}', type='error')
         return None
 
-# Add this helper function to avoid code duplication
+
 def process_response(response):
     try:
         response_text = response.text.strip()
         
-        # Remove any markdown formatting if present
+       
         if '```' in response_text:
             response_text = response_text.split('```')[1]
             if '\n' in response_text:
@@ -825,7 +824,7 @@ def process_response(response):
         response_text = response_text.replace('```', '').strip()
         data = json.loads(response_text)
         
-        # Ensure the response has the expected structure
+      
         if isinstance(data, dict) and 'people' in data:
             return data
         elif isinstance(data, list):
@@ -838,18 +837,18 @@ def process_response(response):
         ui.notify(f'Error: Invalid JSON response from API: {str(e)}', type='error')
         return None
 
-# Update these functions to use a simpler refresh mechanism
+
 def save_to_favorites(data):
     global saved_favorites
     saved_favorites.extend(data['people'])
     ui.notify('Added to favorites!', type='success')
-    refresh_containers()  # Call the new refresh function
+    refresh_containers()  
 
 def remove_from_favorites(index):
     global saved_favorites
     saved_favorites.pop(index)
     ui.notify('Removed from favorites', type='info')
-    refresh_containers()  # Call the new refresh function
+    refresh_containers()  
 
 def add_to_history(data):
     global generation_history
@@ -859,15 +858,15 @@ def add_to_history(data):
     })
     if len(generation_history) > max_history_entries:
         generation_history.pop(0)
-    refresh_containers()  # Call the new refresh function
+    refresh_containers()  
 
 def clear_history():
     global generation_history
     generation_history.clear()
     ui.notify('History cleared', type='info')
-    refresh_containers()  # Call the new refresh function
+    refresh_containers() 
 
-# Add this new function to refresh both containers
+
 def refresh_containers():
     if favorites_container:
         favorites_container.clear()
@@ -932,14 +931,13 @@ async def export_data(format_type='json'):
         except Exception as e:
             ui.notify(f'Error exporting data: {str(e)}', type='error')
 
-# Add the missing generate_surprise function
 async def generate_surprise():
     ui.notify('Generating surprising data...', type='info')
     try:
         data = generate_surprise_data(count=num_entries)
         if data and data.get('people'):
             with ui.dialog() as dialog, ui.card().classes('w-96 dialog-content'):
-                # Add header with title and favorite button
+               
                 with ui.row().classes('w-full justify-between items-center mb-4'):
                     ui.label('🎲 Surprise Data Generated!').classes('text-h6')
                     ui.button(icon='favorite', on_click=lambda: save_to_favorites(data)).classes(
@@ -957,7 +955,7 @@ async def generate_surprise():
                         if i < len(data.get('people')) - 1:
                             ui.separator().classes('my-4')
                 
-                # Footer with close button
+                
                 with ui.row().classes('w-full justify-between mt-4'):
                     ui.button('Close', on_click=dialog.close)
                     ui.button(
@@ -965,7 +963,7 @@ async def generate_surprise():
                         on_click=lambda: [save_to_favorites(data), dialog.close()]
                     ).classes('bg-red-600')
                 dialog.open()
-                # Add to history after showing dialog
+                
                 add_to_history(data)
         else:
             ui.notify('Failed to generate surprise data', type='error')
@@ -973,7 +971,7 @@ async def generate_surprise():
         print(f"Error in generate_surprise: {str(e)}")
         ui.notify(f'Error: {str(e)}', type='error')
 
-# Make sure these are at the very end of the file
+
 ui.page('/')(main_page)
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8081))
