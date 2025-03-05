@@ -545,7 +545,7 @@ def generate_fantasy_data(count=1, fantasy_type='Time Travel', subtype='Medieval
                     "occupation": "fantasy appropriate role",
                     "special_traits": ["trait1", "trait2"],
                     "equipment": ["item1", "item2"],
-                    {'\"relationships\": [{{\"to\": \"other_character_name\", \"type\": \"relationship_type\"}}],' if fantasy_type == 'Character Universe' else ''}
+                    {'\"relationships\": [{{\"to\": \"other_character_name\", \"type\": \"relationship_type"}}],' if fantasy_type == 'Character Universe' else ''}
                     "backstory": "brief character backstory"
                 }}
             ]
