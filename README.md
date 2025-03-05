@@ -73,7 +73,7 @@ Fake Frenzy is a sophisticated web application that leverages Google's Gemini AI
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/fake-frenzy.git
+git clone https://github.com/SoumitraDeshpande11/FakeFrenzy.git
 cd fake-frenzy
 ```
 
