@@ -523,41 +523,43 @@ def main_page():
 def generate_fantasy_data(count=1, fantasy_type='Time Travel', subtype='Medieval', include_story=False):
     try:
         # Build the prompt based on fantasy type
-       base_prompt = f""" Requirements:
+        base_prompt = f"""Generate {count} {'interconnected' if fantasy_type == 'Character Universe' else ''} fantasy characters with rich details.
+        
+        Fantasy Type: {fantasy_type}
+        Sub-type: {subtype}
+        
+        Requirements:
         - Create {'interconnected' if fantasy_type == 'Character Universe' else 'unique'} characters
         - Include fantasy-specific details
         - Maintain internal consistency
-        - {"Include relationships between characters" if fantasy_type == 'Character Universe' else ''}
-    
-    Return valid JSON with this structure:
-    {{
-        "people": [
-            {{
-                "full_name": "fantasy appropriate name",
-                "title": "character title or role",
-                "age": "age or age range",
-                "origin": "place of origin",
-                "occupation": "fantasy appropriate role",
-                "special_traits": ["trait1", "trait2"],
-                "equipment": ["item1", "item2"],
-                {"\"relationships\": [{\"to\": \"other_character_name\", \"type\": \"relationship_type\"}]," if fantasy_type == 'Character Universe' else ''}
-                "backstory": "brief character backstory"
-            }}
-        ]
-    }}
-    """
-    
-    if include_story:
-        base_prompt += """
-    Also include for each character:
-        "daily_life": "description of typical day",
-        "notable_events": ["event1", "event2"],
-        "future_goals": "character ambitions"
-    """
-    
-    print(f"Generating fantasy data with type: {fantasy_type}, subtype: {subtype}")
-    response = model.generate_content(base_prompt)
-    return process_response(response)
+        - {'Include relationships between characters' if fantasy_type == 'Character Universe' else ''}
+        
+        Return valid JSON with this structure:
+        {{
+            "people": [
+                {{
+                    "full_name": "fantasy appropriate name",
+                    "title": "character title or role",
+                    "age": "age or age range",
+                    "origin": "place of origin",
+                    "occupation": "fantasy appropriate role",
+                    "special_traits": ["trait1", "trait2"],
+                    "equipment": ["item1", "item2"],
+                    {'\"relationships\": [{{\"to\": \"other_character_name\", \"type\": \"relationship_type\"}}],' if fantasy_type == 'Character Universe' else ''}
+                    "backstory": "brief character backstory"
+                }}
+            ]
+        }}"""
+
+        if include_story:
+            base_prompt += """\nAlso include for each character:
+            "daily_life": "description of typical day",
+            "notable_events": ["event1", "event2"],
+            "future_goals": "character ambitions\""""
+
+        print(f"Generating fantasy data with type: {fantasy_type}, subtype: {subtype}")
+        response = model.generate_content(base_prompt)
+        return process_response(response)
 
     except Exception as e:
         print(f"Error generating fantasy data: {str(e)}")
@@ -973,4 +975,14 @@ async def generate_surprise():
 
 # Make sure these are at the very end of the file
 ui.page('/')(main_page)
-ui.run(reload=False)  # Add reload=False to prevent auto-reload issues
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 8081))
+    ui.run(
+        host='0.0.0.0',
+        port=port,
+        reload=False,
+        title='Fake Frenzy',
+        show=False,
+        dark=False,
+        tailwind=True
+    )
