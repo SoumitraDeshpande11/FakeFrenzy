@@ -27,8 +27,8 @@ export_format = 'json'  # Default export format
 max_history_entries = 50  # Default max history entries
 
 # Add these global variables at the top with other globals
-favorites_container = None
-history_container = None
+favorites_container = ui.column().classes('w-full')
+history_container = ui.column().classes('w-full')
 
 # Add these global variables at the top with other globals
 mode = None
