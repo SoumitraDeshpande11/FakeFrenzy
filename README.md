@@ -1,8 +1,12 @@
 # Fake Frenzy 
 
 A powerful and creative fake data generation tool powered by Google's Gemini AI. Generate realistic, fantasy, and story-based data with an intuitive interface.
-The Deployment - https://fakefrenzy.onrender.com/
-Fantasy mode is still in works
+# The Deployment - https://fakefrenzy.onrender.com/
+
+The problems i faced - 
+the ui - this is something im a little bit behind in i.e frontend so had to use perplexity and cursor ai to come up and develop the theme 
+the issues that havent been resolved - 
+the export button : it works on my local host but when deployed it doesnt still working on that.
 
 ## Table of Contents
 - [Overview](#overview)
