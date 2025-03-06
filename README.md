@@ -9,7 +9,7 @@ A powerful and creative fake data generation tool powered by Google's Gemini AI.
 
 ## the issues that havent been resolved - 
 
-###the export button : it works on my local host but when deployed it doesnt still working on that.
+### the export button : it works on my local host but when deployed it doesnt still working on that. a vide of this demo is uploaded
 
 ## Table of Contents
 - [Overview](#overview)
