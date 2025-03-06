@@ -519,32 +519,42 @@ def main_page():
                 ).classes('w-48')
 
 
-def generate_fantasy_data(count=1):
-    fantasy_data = {
-        "character_name": fake.name(),
-        "race": random.choice(["Elf", "Dwarf", "Human", "Orc", "Halfling"]),
-        "class": random.choice(["Warrior", "Mage", "Rogue", "Cleric", "Ranger"]),
-        "level": random.randint(1, 20),
-        "stats": {
-            "strength": random.randint(8, 20),
-            "dexterity": random.randint(8, 20),
-            "constitution": random.randint(8, 20),
-            "intelligence": random.randint(8, 20),
-            "wisdom": random.randint(8, 20),
-            "charisma": random.randint(8, 20)
-        },
-        "relationships": [
-            {
-                "character_name": fake.name(),
-                "type": random.choice(["Friend", "Enemy", "Mentor", "Student"])
-            },
-            {
-                "character_name": fake.name(),
-                "type": random.choice(["Friend", "Enemy", "Mentor", "Student"])
-            }
-        ]
-    }
-    return fantasy_data
+def generate_fantasy_data(count=1, fantasy_type='Time Travel', subtype='Medieval (500 - 1500)'):
+    try:
+        prompt = f"""Generate {count} unique fantasy character(s) based on:
+        Type: {fantasy_type}
+        Setting: {subtype}
+        
+        Return ONLY a valid JSON object with this exact format:
+        {{
+            "people": [
+                {{
+                    "full_name": "fantasy name",
+                    "title": "character title",
+                    "age": "age",
+                    "origin": "place of origin",
+                    "occupation": "role or profession",
+                    "special_traits": ["trait1", "trait2", "trait3"],
+                    "equipment": ["item1", "item2", "item3"],
+                    "relationships": [
+                        {{"type": "relationship type", "to": "other character name"}}
+                    ],
+                    "backstory": "character background story"
+                }}
+            ]
+        }}
+        
+        Make the characters fit the {fantasy_type} setting of {subtype}.
+        Ensure all details are creative and consistent with the setting."""
+
+        response = model.generate_content(prompt)
+        data = process_response(response)
+        return data
+
+    except Exception as e:
+        print(f"Error generating fantasy data: {str(e)}")
+        ui.notify(f'Error generating fantasy data: {str(e)}', type='error')
+        return None
 
 def generate_character_story(character_data):
     try:
