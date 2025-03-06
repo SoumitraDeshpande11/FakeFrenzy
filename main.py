@@ -519,51 +519,32 @@ def main_page():
                 ).classes('w-48')
 
 
-def generate_fantasy_data(count=1, fantasy_type='Time Travel', subtype='Medieval', include_story=False):
-    try:
-       
-        base_prompt = f"""Generate {count} {'interconnected' if fantasy_type == 'Character Universe' else ''} fantasy characters with rich details.
-        
-        Fantasy Type: {fantasy_type}
-        Sub-type: {subtype}
-        
-        Requirements:
-        - Create {'interconnected' if fantasy_type == 'Character Universe' else 'unique'} characters
-        - Include fantasy-specific details
-        - Maintain internal consistency
-        - {'Include relationships between characters' if fantasy_type == 'Character Universe' else ''}
-        
-        Return valid JSON with this structure:
-        {{
-            "people": [
-                {{
-                    "full_name": "fantasy appropriate name",
-                    "title": "character title or role",
-                    "age": "age or age range",
-                    "origin": "place of origin",
-                    "occupation": "fantasy appropriate role",
-                    "special_traits": ["trait1", "trait2"],
-                    "equipment": ["item1", "item2"],
-                    "relationships": [{"to": "other_character_name", "type": "relationship_type"}] if fantasy_type == 'Character Universe' else [],
-                    "backstory": "brief character backstory"
-                }}
-            ]
-        }}"""
-
-        if include_story:
-            base_prompt += """\nAlso include for each character:
-            "daily_life": "description of typical day",
-            "notable_events": ["event1", "event2"],
-            "future_goals": "character ambitions\""""
-
-        print(f"Generating fantasy data with type: {fantasy_type}, subtype: {subtype}")
-        response = model.generate_content(base_prompt)
-        return process_response(response)
-
-    except Exception as e:
-        print(f"Error generating fantasy data: {str(e)}")
-        ui.notify(f'Error: {str(e)}', type='error')
-        return None
+def generate_fantasy_data(count=1):
+    fantasy_data = {
+        "character_name": fake.name(),
+        "race": random.choice(["Elf", "Dwarf", "Human", "Orc", "Halfling"]),
+        "class": random.choice(["Warrior", "Mage", "Rogue", "Cleric", "Ranger"]),
+        "level": random.randint(1, 20),
+        "stats": {
+            "strength": random.randint(8, 20),
+            "dexterity": random.randint(8, 20),
+            "constitution": random.randint(8, 20),
+            "intelligence": random.randint(8, 20),
+            "wisdom": random.randint(8, 20),
+            "charisma": random.randint(8, 20)
+        },
+        "relationships": [
+            {
+                "character_name": fake.name(),
+                "type": random.choice(["Friend", "Enemy", "Mentor", "Student"])
+            },
+            {
+                "character_name": fake.name(),
+                "type": random.choice(["Friend", "Enemy", "Mentor", "Student"])
+            }
+        ]
+    }
+    return fantasy_data
 
 def generate_character_story(character_data):
     try:
@@ -974,7 +955,7 @@ async def generate_surprise():
 
 ui.page('/')(main_page)
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8081))
+    port = int(os.environ.get('PORT', 8082))  
     ui.run(
         host='0.0.0.0',
         port=port,
